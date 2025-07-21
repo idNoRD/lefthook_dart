@@ -7,11 +7,12 @@ import 'package:cli_util/cli_logging.dart';
 import 'package:system_info2/system_info2.dart';
 
 const _LEFTHOOK_VERSION = '1.12.2';
+const pubspec_version='1.0.1'; // @TODO generate using build runner
 
 void main(List<String> args) async {
   final logger = new Logger.standard();
   final executablePath = Platform.script.resolve('../.exec/lefthook').toFilePath();
-
+  logger.stdout('lefthook_dart v$pubspec_version is using lefthook v$_LEFTHOOK_VERSION at: $executablePath');
   await _ensureExecutable(executablePath);
 
   final validateResult = await Process.run(executablePath, ['validate']);

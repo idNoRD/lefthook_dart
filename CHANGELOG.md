@@ -6,6 +6,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and uses [Semantic Versioning](https://semver.org/).
 
 ---
+## [1.0.1] - 2025-07-22
+
+### Fixed
+- Fixed the executables mapping in pubspec.yaml to ensure the lefthook command uses lefthook_dart, the Dart-based wrapper for Lefthook.
 
 ## [1.0.0] – 2025-07-21
 

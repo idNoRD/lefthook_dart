@@ -1,11 +1,11 @@
 name: lefthook_dart
 description: wrapper of lefthook for flutter and dart
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/idNoRD/lefthook_dart
 environment:
   sdk: '>=3.8.0 <4.0.0'
 executables:
-  lefthook_dart: lefthook-dart
+  lefthook: lefthook-dart
 dependencies:
   archive: ^4.0.7
   system_info2: ^4.0.0

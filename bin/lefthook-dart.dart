@@ -4,25 +4,41 @@ import 'dart:async';
 import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
 import 'package:cli_util/cli_logging.dart';
-import 'package:system_info/system_info.dart';
+import 'package:system_info2/system_info2.dart';
 
-const _LEFTHOOK_VERSION = '0.6.3';
+const _LEFTHOOK_VERSION = '1.12.2';
 
 void main(List<String> args) async {
   final logger = new Logger.standard();
-  final executablePath = Platform.script.resolve('../.exec/lefthook').toFilePath();;
+  final executablePath = Platform.script.resolve('../.exec/lefthook').toFilePath();
 
   await _ensureExecutable(executablePath);
 
+  final validateResult = await Process.run(executablePath, ['validate']);
+  if (validateResult.exitCode == 0) {
+    logger.stdout('🎉 lefthook-dart validation passed successfully! Output: ${validateResult.stdout}');
+  } else {
+    logger.stderr(
+      '⚠️ lefthook-dart validation failed.\n'
+      'stderr Output:\n${validateResult.stderr}',
+    );
+    logger.stdout('stdout Output:\n${validateResult.stdout}');
+    exit(validateResult.exitCode);
+  }
+
   final result = await Process.run(executablePath, args);
   if (result.exitCode != 0) {
-    logger.stderr(result.stderr);
+    logger.stderr(
+      '❌ lefthook-dart failed.\n'
+      'Details:\n${result.stderr}',
+    );
+    exit(result.exitCode);
   } else {
     logger.stdout(result.stdout);
   }
 }
 
-void _ensureExecutable(String targetPath, {bool force = false}) async {
+Future<void> _ensureExecutable(String targetPath, {bool force = false}) async {
   Logger logger = new Logger.standard();
 
   final fileAlreadyExist = await _isExecutableExist(targetPath);
@@ -30,7 +46,7 @@ void _ensureExecutable(String targetPath, {bool force = false}) async {
     return;
   }
 
-  final url = _resolveDownloadUrl();
+  final url = _resolveDownloadUrl(logger);
 
   logger.stdout('Download executable for lefthook...');
   logger.stdout(url);
@@ -41,7 +57,7 @@ void _ensureExecutable(String targetPath, {bool force = false}) async {
   logger.stdout('');
   logger.stdout('Extracting...');
 
-  final extracted = _exctractFile(file);
+  final extracted = _extractFile(file);
 
   logger.stdout('Extracted');
   logger.stdout('');
@@ -56,7 +72,7 @@ void _ensureExecutable(String targetPath, {bool force = false}) async {
   logger.stdout('All done!');
 }
 
-String _resolveDownloadUrl() {
+String _resolveDownloadUrl(Logger logger) {
   String getOS() {
     if (Platform.isLinux) {
       return 'Linux';
@@ -73,11 +89,10 @@ String _resolveDownloadUrl() {
     throw new Error();
   }
 
-  String getArchitecture() {
-    final arch = SysInfo.kernelArchitecture;
-
-    if (arch == 'x86_64') {
-      return arch;
+  String getArchitecture(Logger logger) {
+    final ProcessorArchitecture arch = SysInfo.kernelArchitecture;
+    if ('x86_64' == arch.name.toLowerCase()) {
+      return arch.name;
     }
 
     // TODO: check for i386
@@ -86,7 +101,7 @@ String _resolveDownloadUrl() {
   }
 
   final os = getOS();
-  final architecture = getArchitecture();
+  final architecture = getArchitecture(logger);
 
   return 'https://github.com/Arkweid/lefthook/releases/download/v${_LEFTHOOK_VERSION}/lefthook_${_LEFTHOOK_VERSION}_${os}_${architecture}.gz';
 }
@@ -96,7 +111,7 @@ Future<List<int>> _downloadFile(String url) async {
   final request = await client.getUrl(Uri.parse(url));
   final response = await request.close();
 
-  final downloadData = List<int>();
+  final downloadData = List<int>.empty(growable: true);
   final completer = new Completer();
   response.listen((d) => downloadData.addAll(d), onDone: completer.complete);
   await completer.future;
@@ -104,7 +119,7 @@ Future<List<int>> _downloadFile(String url) async {
   return downloadData;
 }
 
-List<int> _exctractFile(List<int> downloadedData) {
+List<int> _extractFile(List<int> downloadedData) {
   return GZipDecoder().decodeBytes(downloadedData);
 }
 
@@ -112,7 +127,7 @@ Future<void> _saveFile(String targetPath, List<int> data) async {
   Future<void> makeExecutable(File file) async {
     if (Platform.isWindows) {
       // TODO: write code for Windows case
-      throw new Exception("Can' t set executable persmissions on Windows");
+      throw new Exception("Can't set executable permissions on Windows");
     }
 
     final result = await Process.run("chmod", ["u+x", file.path]);
@@ -129,7 +144,7 @@ Future<void> _saveFile(String targetPath, List<int> data) async {
 }
 
 Future<void> _installLefthook(String executablePath, Logger logger) async {
-  final result = await Process.run(executablePath, ["install", '-f']);
+  final result = await Process.run(executablePath, ["install" /*'-f'*/]);
 
   if (result.exitCode != 0) {
     logger.stderr(result.stderr);

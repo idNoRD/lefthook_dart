@@ -1,27 +1,22 @@
-# Lefthook
+# lefthook-dart
 
-> The fastest polyglot Git hooks manager out there
+A Dart wrapper for [Lefthook](https://github.com/evilmartians/lefthook) — the fast and powerful Git hooks manager.
 
-<img align="right" width="147" height="100" title="Lefthook logo"
-     src="https://raw.githubusercontent.com/Arkweid/lefthook/master/logo_sign.svg?sanitize=true">
+## About this project
 
-Fast and powerful Git hooks manager for Node.js, Ruby or any other type of projects.
+This is a community-maintained continuation of the original [project-cemetery/lefthook](https://github.com/project-cemetery/lefthook) package, which served as a simple Dart CLI wrapper around the Lefthook binary.
 
-* **Fast.** It is written in Go. Can run commands in parallel.
-* **Powerful.** With a few lines in the config you can check only the changed files on `pre-push` hook.
-* **Simple.** It is single dependency-free binary which can work in any environment.
+The original repository is no longer maintained. This fork updates the tool for modern Dart/Flutter projects, ensuring compatibility, reliability, and ease of use.
 
-## Original tool
-
-This repo is just Dart-wrapper for [Lefthook](https://github.com/Arkweid/lefthook). For detailed documentation, check the main repository.
+For detailed usage and configuration options, refer to the official [Lefthook documentation](https://github.com/evilmartians/lefthook).
 
 ## Installation
 
 ```sh
-pub global activate lefthook
+pub global activate lefthook-dart
 ```
 
-You are beautiful! Just create `lefthook.yml` in root of your project, add description of hooks, and start using it.
+Change `lefthook.yml` in root of your project, add description of hooks, and start using it.
 
 ## Examples
 
@@ -42,11 +37,7 @@ pre-push:
 
 pre-commit:
   commands:
-    pretty:
+    prettify:
       glob: "*.dart"
-      run: flutter format {staged_files}
+      run: dart format {staged_files}
 ```
-
-### More
-
-More examples in [documentation of original repository](https://github.com/Arkweid/lefthook/blob/master/docs/full_guide.md#examples).

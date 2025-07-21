@@ -1,13 +1,12 @@
-name: lefthook
-version: 0.6.5
-author: Igor Kamyshev <igor@kamyshev.me>
-description: Fast and powerful Git hooks manager for any type of projects.
-homepage: https://github.com/drt-pkgz/lefthook
+name: lefthook_dart
+description: wrapper of lefthook for flutter and dart
+version: 1.0.0
+homepage: https://github.com/idNoRD/lefthook_dart
 environment:
-  sdk: '>=2.0.0 <3.0.0'
-dependencies:
-  system_info: ^0.1.1
-  archive: ^2.0.10
-  cli_util: ^0.1.3+2
+  sdk: '>=3.8.0 <4.0.0'
 executables:
-  lefthook: lefthook
+  lefthook_dart: lefthook-dart
+dependencies:
+  archive: ^4.0.7
+  system_info2: ^4.0.0
+  cli_util: ^0.4.2

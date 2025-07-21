@@ -5,7 +5,7 @@ homepage: https://github.com/drt-pkgz/lefthook
 environment:
   sdk: '>=3.8.0 <4.0.0'
 executables:
-  lefthook_dart: bin/lefthook_dart.dart
+  lefthook_dart: lefthook-dart
 dependencies:
   archive: ^4.0.7
   system_info2: ^4.0.0

@@ -3,7 +3,7 @@ description: wrapper of lefthook for flutter and dart
 version: 0.0.1
 homepage: https://github.com/drt-pkgz/lefthook
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.8.0 <4.0.0'
 executables:
   lefthook_dart: bin/lefthook_dart.dart
 dependencies:

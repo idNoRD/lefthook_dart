@@ -10,3 +10,4 @@ dependencies:
   archive: ^4.0.7
   system_info2: ^4.0.0
   cli_util: ^0.4.2
+  path: ^1.9.1

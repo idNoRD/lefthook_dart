@@ -37,3 +37,23 @@ pre-commit:
 ```sh
 lefthook run pre-commit
 ```
+
+### Step 5: To uninstall (optional)
+```shell
+flutter pub global deactivate lefthook_dart
+```
+
+### If you are using Melos
+```
+###############################################
+##          GIT HOOK COMMANDS                ##
+###############################################
+hooks:install:
+run: flutter pub global activate lefthook_dart && lefthook
+
+hooks:uninstall:
+run: flutter pub global deactivate lefthook_dart
+
+hooks:run:
+run: lefthook run pre-commit
+```

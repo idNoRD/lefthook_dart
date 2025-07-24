@@ -5,50 +5,56 @@ import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:system_info2/system_info2.dart';
-import 'package:path/path.dart' as p;
 
 const _LEFTHOOK_VERSION = '1.12.2';
-const pubspec_version = '1.0.2'; // @TODO generate using build runner
+const pubspec_version = '1.0.3'; // @TODO generate using build runner
 
 void main(List<String> args) async {
   final logger = new Logger.standard();
 
-  final gitVersionGeneral = await Process.run('git', ['version']);
-  logger.stdout(
-    '[lefthook-dart] DEBUG gitVersionGeneral=${gitVersionGeneral.stdout}',
+  // if flutter installed using snap it tries to use git from snap that is old and not supported by lefthook
+  // as a solution we change PATH to pick git from /usr/bin instead of old git version from snap
+  String environmentThatIncludesGit = !Platform.isWindows
+      ? '/usr/bin:${Platform.environment['PATH']}'
+      : '${Platform.environment['PATH']}';
+
+  final whichGit = await Process.run(
+    'which',
+    ['git'],
+    environment: {'PATH': environmentThatIncludesGit},
   );
+  logger.stdout('[lefthook-dart] is using git located at ${whichGit.stdout}');
+
+  final gitVersion = await Process.run(
+    'git',
+    ['version'],
+    environment: {'PATH': environmentThatIncludesGit},
+  );
+
+  logger.stdout('[lefthook-dart] gitVersion=${gitVersion.stdout}');
 
   final projectDir = Directory.current.path;
   logger.stdout('[lefthook-dart] DEBUG projectDir=${projectDir}');
-
-  final gitVersionProjectDir = await Process.run('git', [
-    'version',
-  ], workingDirectory: projectDir);
-  logger.stdout(
-    '[lefthook-dart] DEBUG gitVersionProjectDir=${gitVersionProjectDir.stdout}',
-  );
 
   final executablePath = Platform.script
       .resolve('../.exec/lefthook')
       .toFilePath();
 
-  final executableDir = p.dirname(executablePath);
-  logger.stdout('[lefthook-dart] DEBUG executableDir: ${executableDir}');
-  final gitVersionExecutableDir = await Process.run('git', [
-    'version',
-  ], workingDirectory: executableDir);
-  logger.stdout(
-    '[lefthook-dart] DEBUG gitVersionExecutableDir=${gitVersionExecutableDir.stdout}',
-  );
-
   logger.stdout(
     'lefthook_dart v$pubspec_version is using lefthook v$_LEFTHOOK_VERSION at: $executablePath',
   );
-  await _ensureExecutable(executablePath, projectDir);
+  await _ensureExecutable(
+    executablePath,
+    projectDir,
+    environmentThatIncludesGit,
+  );
 
-  final validateResult = await Process.run(executablePath, [
-    'validate',
-  ], workingDirectory: projectDir);
+  final validateResult = await Process.run(
+    executablePath,
+    ['validate'],
+    workingDirectory: projectDir,
+    environment: {'PATH': environmentThatIncludesGit},
+  );
   if (validateResult.exitCode == 0) {
     logger.stdout(
       '🎉 lefthook-dart validation passed successfully! Output: ${validateResult.stdout}',
@@ -66,6 +72,7 @@ void main(List<String> args) async {
     executablePath,
     args,
     workingDirectory: projectDir,
+    environment: {'PATH': environmentThatIncludesGit},
   );
   if (result.exitCode != 0) {
     logger.stderr(
@@ -80,7 +87,8 @@ void main(List<String> args) async {
 
 Future<void> _ensureExecutable(
   String targetPath,
-  String projectDir, {
+  String projectDir,
+  String environmentThatIncludesGit, {
   bool force = false,
 }) async {
   Logger logger = new Logger.standard();
@@ -111,7 +119,12 @@ Future<void> _ensureExecutable(
   logger.stdout('Saved to ${targetPath}');
   logger.stdout('');
 
-  await _installLefthook(targetPath, projectDir, logger);
+  await _installLefthook(
+    targetPath,
+    projectDir,
+    environmentThatIncludesGit,
+    logger,
+  );
 
   logger.stdout('All done!');
 }
@@ -190,15 +203,19 @@ Future<void> _saveFile(String targetPath, List<int> data) async {
 Future<void> _installLefthook(
   String executablePath,
   String projectDir,
+  String environmentThatIncludesGit,
   Logger logger,
 ) async {
   logger.stdout(
     '[lefthook-dart] DEBUG Executing lefthook install in workingDirectory=' +
         projectDir,
   );
-  final result = await Process.run(executablePath, [
-    "install" /*'-f'*/,
-  ], workingDirectory: projectDir);
+  final result = await Process.run(
+    executablePath,
+    ["install" /*'-f'*/],
+    workingDirectory: projectDir,
+    environment: {'PATH': environmentThatIncludesGit},
+  );
 
   if (result.exitCode != 0) {
     logger.stderr(result.stderr);

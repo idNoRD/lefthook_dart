@@ -6,6 +6,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and uses [Semantic Versioning](https://semver.org/).
 
 ---
+## [1.0.3] - 2025-07-24
+
+### Fixed
+if flutter installed using snap it tries to use git from snap that is old and not supported by lefthook
+as a solution we change PATH to pick git from /usr/bin instead of old git version from snap
+
 ## [1.0.2] - 2025-07-24
 
 ### Fixed

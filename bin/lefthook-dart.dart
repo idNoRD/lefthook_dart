@@ -8,33 +8,51 @@ import 'package:system_info2/system_info2.dart';
 import 'package:path/path.dart' as p;
 
 const _LEFTHOOK_VERSION = '1.12.2';
-const pubspec_version='1.0.2'; // @TODO generate using build runner
+const pubspec_version = '1.0.2'; // @TODO generate using build runner
 
 void main(List<String> args) async {
   final logger = new Logger.standard();
 
   final gitVersionGeneral = await Process.run('git', ['version']);
-  logger.stdout('[lefthook-dart] DEBUG gitVersionGeneral=${gitVersionGeneral.stdout}');
+  logger.stdout(
+    '[lefthook-dart] DEBUG gitVersionGeneral=${gitVersionGeneral.stdout}',
+  );
 
   final projectDir = Directory.current.path;
   logger.stdout('[lefthook-dart] DEBUG projectDir=${projectDir}');
 
-  final gitVersionProjectDir = await Process.run('git', ['version'], workingDirectory: projectDir);
-  logger.stdout('[lefthook-dart] DEBUG gitVersionProjectDir=${gitVersionProjectDir.stdout}');
+  final gitVersionProjectDir = await Process.run('git', [
+    'version',
+  ], workingDirectory: projectDir);
+  logger.stdout(
+    '[lefthook-dart] DEBUG gitVersionProjectDir=${gitVersionProjectDir.stdout}',
+  );
 
-  final executablePath = Platform.script.resolve('../.exec/lefthook').toFilePath();
+  final executablePath = Platform.script
+      .resolve('../.exec/lefthook')
+      .toFilePath();
 
   final executableDir = p.dirname(executablePath);
   logger.stdout('[lefthook-dart] DEBUG executableDir: ${executableDir}');
-  final gitVersionExecutableDir = await Process.run('git', ['version'], workingDirectory: executableDir);
-  logger.stdout('[lefthook-dart] DEBUG gitVersionExecutableDir=${gitVersionExecutableDir.stdout}');
+  final gitVersionExecutableDir = await Process.run('git', [
+    'version',
+  ], workingDirectory: executableDir);
+  logger.stdout(
+    '[lefthook-dart] DEBUG gitVersionExecutableDir=${gitVersionExecutableDir.stdout}',
+  );
 
-  logger.stdout('lefthook_dart v$pubspec_version is using lefthook v$_LEFTHOOK_VERSION at: $executablePath');
+  logger.stdout(
+    'lefthook_dart v$pubspec_version is using lefthook v$_LEFTHOOK_VERSION at: $executablePath',
+  );
   await _ensureExecutable(executablePath, projectDir);
 
-  final validateResult = await Process.run(executablePath, ['validate'], workingDirectory: projectDir);
+  final validateResult = await Process.run(executablePath, [
+    'validate',
+  ], workingDirectory: projectDir);
   if (validateResult.exitCode == 0) {
-    logger.stdout('🎉 lefthook-dart validation passed successfully! Output: ${validateResult.stdout}');
+    logger.stdout(
+      '🎉 lefthook-dart validation passed successfully! Output: ${validateResult.stdout}',
+    );
   } else {
     logger.stderr(
       '⚠️ lefthook-dart validation failed.\n'
@@ -44,7 +62,11 @@ void main(List<String> args) async {
     exit(validateResult.exitCode);
   }
 
-  final result = await Process.run(executablePath, args, workingDirectory: projectDir);
+  final result = await Process.run(
+    executablePath,
+    args,
+    workingDirectory: projectDir,
+  );
   if (result.exitCode != 0) {
     logger.stderr(
       '❌ lefthook-dart failed.\n'
@@ -56,7 +78,11 @@ void main(List<String> args) async {
   }
 }
 
-Future<void> _ensureExecutable(String targetPath, String projectDir, {bool force = false}) async {
+Future<void> _ensureExecutable(
+  String targetPath,
+  String projectDir, {
+  bool force = false,
+}) async {
   Logger logger = new Logger.standard();
 
   final fileAlreadyExist = await _isExecutableExist(targetPath);
@@ -161,9 +187,18 @@ Future<void> _saveFile(String targetPath, List<int> data) async {
   await makeExecutable(executableFile);
 }
 
-Future<void> _installLefthook(String executablePath, String projectDir, Logger logger) async {
-  logger.stdout('[lefthook-dart] DEBUG Executing lefthook install in workingDirectory='+projectDir);
-  final result = await Process.run(executablePath, ["install" /*'-f'*/], workingDirectory: projectDir);
+Future<void> _installLefthook(
+  String executablePath,
+  String projectDir,
+  Logger logger,
+) async {
+  logger.stdout(
+    '[lefthook-dart] DEBUG Executing lefthook install in workingDirectory=' +
+        projectDir,
+  );
+  final result = await Process.run(executablePath, [
+    "install" /*'-f'*/,
+  ], workingDirectory: projectDir);
 
   if (result.exitCode != 0) {
     logger.stderr(result.stderr);

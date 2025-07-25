@@ -1,10 +1,15 @@
-# lefthook_dart
+## lefthook_dart
+[![pub.dev badge](https://img.shields.io/pub/v/lefthook_dart?logo=dart&logoColor=white)](https://pub.dev/packages/lefthook_dart)
+![GitHub Maintained](https://img.shields.io/maintenance/yes/2025)
+[![Pub points](https://badgen.net/pub/points/lefthook_dart)](https://pub.dev/packages/lefthook_dart/score)
+![GitHub License](https://img.shields.io/github/license/idNoRD/lefthook_dart)
+[![Lefthook](https://img.shields.io/badge/Lefthook-1.12.2-blue)](https://github.com/evilmartians/lefthook/releases)
 
 A Dart wrapper for [Lefthook](https://github.com/evilmartians/lefthook) — the fast and powerful Git hooks manager.
 
-## About this project
+### About this project
 
-This is a community-maintained continuation of the original [project-cemetery/lefthook](https://github.com/project-cemetery/lefthook) package, which served as a simple Dart CLI wrapper around the Lefthook binary.
+This is a continuation of the original [project-cemetery/lefthook](https://github.com/project-cemetery/lefthook) package, which served as a simple Dart CLI wrapper around the Lefthook binary.
 
 The original repository is no longer maintained. This fork updates the tool for modern Dart/Flutter projects, ensuring compatibility, reliability, and ease of use.
 
@@ -13,13 +18,13 @@ For detailed usage and configuration options, refer to the official [Lefthook do
 ## Installation
 
 ### Step 1: Enable the `lefthook` command to run from any place in your terminal
-If you already have the original Lefthook installed, you will need to uninstall it, as it may cause conflicts.  
-Run the command below inside the project directory where you want Git hooks to be managed.
+If you already have the original Lefthook installed, you will need to uninstall it, as it may cause conflicts.
 ```sh
 flutter pub global activate lefthook_dart
 ```
 This will ensure that the `lefthook` command uses `lefthook_dart`, a Dart-based wrapper around original Lefthook.
 ### Step 2: The first run of `lefthook` will download lefthook and execute `lefthook install` automatically
+Run the command below inside the project directory where you want Git hooks to be managed.
 ```sh
 lefthook
 ```

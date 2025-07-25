@@ -34,13 +34,11 @@ pre-commit:
       run: dart format --line-length 80 {staged_files} && git add {staged_files}
 ```
 
-### Step 3: Run of `lefthook install`. If it's the first run it will download lefthook and execute `lefthook install`
-Run the command below inside the project directory where you want Git hooks to be managed.
+### Step 3: Run `lefthook install` inside the project directory where you want Git hooks to be managed.
+If it's the first run it will download the native Lefthook binary for your OS, install Git hooks using lefthook install, and prepare your repo for hook execution.
 ```sh
 lefthook install
 ```
-This will download the native Lefthook binary for your OS, install Git hooks using lefthook install, and prepare your repo for hook execution.
-
 > Now, every time you run git commit, this hook will automatically format staged Dart files and proceed commit with formatted code.
 👉 For a working Flutter example, [see example/README.md](example/README.md)
 
@@ -61,7 +59,7 @@ scripts:
   ##          GIT HOOK COMMANDS                ##
   ###############################################
   hooks:install:
-    run: flutter pub global activate lefthook_dart && lefthook
+    run: flutter pub global activate lefthook_dart && lefthook install
   
   hooks:uninstall:
     run: flutter pub global deactivate lefthook_dart

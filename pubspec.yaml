@@ -5,8 +5,10 @@ homepage: https://github.com/idNoRD/lefthook_dart
 environment:
   sdk: '>=3.8.0 <4.0.0'
 executables:
-  lefthook: lefthook-dart
+  lefthook: lefthook_dart
 dependencies:
   archive: ^4.0.7
   system_info2: ^4.0.0
   cli_util: ^0.4.2
+dev_dependencies:
+  lints: ^6.0.0

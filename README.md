@@ -1,4 +1,4 @@
-# lefthook-dart
+# lefthook_dart
 
 A Dart wrapper for [Lefthook](https://github.com/evilmartians/lefthook) — the fast and powerful Git hooks manager.
 

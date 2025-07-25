@@ -6,11 +6,11 @@ import 'package:archive/archive_io.dart';
 import 'package:cli_util/cli_logging.dart';
 import 'package:system_info2/system_info2.dart';
 
-const _LEFTHOOK_VERSION = '1.12.2';
-const pubspec_version = '1.0.3'; // @TODO generate using build runner
+const lefthookVersion = '1.12.2';
+const pubspecVersion = '1.0.3'; // @TODO generate using build runner
 
 void main(List<String> args) async {
-  final logger = new Logger.standard();
+  final logger = Logger.standard();
 
   // if flutter installed using snap it tries to use git from snap that is old and not supported by lefthook
   // as a solution we change PATH to pick git from /usr/bin instead of old git version from snap
@@ -23,7 +23,7 @@ void main(List<String> args) async {
     ['git'],
     environment: {'PATH': environmentThatIncludesGit},
   );
-  logger.stdout('[lefthook-dart] is using git located at ${whichGit.stdout}');
+  logger.stdout('[lefthook_dart] is using git located at ${whichGit.stdout}');
 
   final gitVersion = await Process.run(
     'git',
@@ -31,17 +31,17 @@ void main(List<String> args) async {
     environment: {'PATH': environmentThatIncludesGit},
   );
 
-  logger.stdout('[lefthook-dart] gitVersion=${gitVersion.stdout}');
+  logger.stdout('[lefthook_dart] gitVersion=${gitVersion.stdout}');
 
   final projectDir = Directory.current.path;
-  logger.stdout('[lefthook-dart] DEBUG projectDir=${projectDir}');
+  logger.stdout('[lefthook_dart] DEBUG projectDir=$projectDir');
 
   final executablePath = Platform.script
       .resolve('../.exec/lefthook')
       .toFilePath();
 
   logger.stdout(
-    'lefthook_dart v$pubspec_version is using lefthook v$_LEFTHOOK_VERSION at: $executablePath',
+    'lefthook_dart v$pubspecVersion is using lefthook v$lefthookVersion at: $executablePath',
   );
   await _ensureExecutable(
     executablePath,
@@ -57,11 +57,11 @@ void main(List<String> args) async {
   );
   if (validateResult.exitCode == 0) {
     logger.stdout(
-      '🎉 lefthook-dart validation passed successfully! Output: ${validateResult.stdout}',
+      '🎉 lefthook_dart validation passed successfully! Output: ${validateResult.stdout}',
     );
   } else {
     logger.stderr(
-      '⚠️ lefthook-dart validation failed.\n'
+      '⚠️ lefthook_dart validation failed.\n'
       'stderr Output:\n${validateResult.stderr}',
     );
     logger.stdout('stdout Output:\n${validateResult.stdout}');
@@ -76,7 +76,7 @@ void main(List<String> args) async {
   );
   if (result.exitCode != 0) {
     logger.stderr(
-      '❌ lefthook-dart failed.\n'
+      '❌ lefthook_dart failed.\n'
       'Details:\n${result.stderr}',
     );
     exit(result.exitCode);
@@ -91,7 +91,7 @@ Future<void> _ensureExecutable(
   String environmentThatIncludesGit, {
   bool force = false,
 }) async {
-  Logger logger = new Logger.standard();
+  Logger logger = Logger.standard();
 
   final fileAlreadyExist = await _isExecutableExist(targetPath);
   if (fileAlreadyExist && !force) {
@@ -116,7 +116,7 @@ Future<void> _ensureExecutable(
   logger.stdout('Saving executable file...');
   await _saveFile(targetPath, extracted);
 
-  logger.stdout('Saved to ${targetPath}');
+  logger.stdout('Saved to $targetPath');
   logger.stdout('');
 
   await _installLefthook(
@@ -143,7 +143,7 @@ String _resolveDownloadUrl(Logger logger) {
       return 'Windows';
     }
 
-    throw new Error();
+    throw Error();
   }
 
   String getArchitecture(Logger logger) {
@@ -154,22 +154,22 @@ String _resolveDownloadUrl(Logger logger) {
 
     // TODO: check for i386
 
-    throw new Error();
+    throw Error();
   }
 
   final os = getOS();
   final architecture = getArchitecture(logger);
 
-  return 'https://github.com/Arkweid/lefthook/releases/download/v${_LEFTHOOK_VERSION}/lefthook_${_LEFTHOOK_VERSION}_${os}_${architecture}.gz';
+  return 'https://github.com/Arkweid/lefthook/releases/download/v$lefthookVersion/lefthook_${lefthookVersion}_${os}_$architecture.gz';
 }
 
 Future<List<int>> _downloadFile(String url) async {
-  HttpClient client = new HttpClient();
+  HttpClient client = HttpClient();
   final request = await client.getUrl(Uri.parse(url));
   final response = await request.close();
 
   final downloadData = List<int>.empty(growable: true);
-  final completer = new Completer();
+  final completer = Completer();
   response.listen((d) => downloadData.addAll(d), onDone: completer.complete);
   await completer.future;
 
@@ -184,17 +184,17 @@ Future<void> _saveFile(String targetPath, List<int> data) async {
   Future<void> makeExecutable(File file) async {
     if (Platform.isWindows) {
       // TODO: write code for Windows case
-      throw new Exception("Can't set executable permissions on Windows");
+      throw Exception("Can't set executable permissions on Windows");
     }
 
     final result = await Process.run("chmod", ["u+x", file.path]);
 
     if (result.exitCode != 0) {
-      throw new Exception(result.stderr);
+      throw Exception(result.stderr);
     }
   }
 
-  final executableFile = new File(targetPath);
+  final executableFile = File(targetPath);
   await executableFile.create(recursive: true);
   await executableFile.writeAsBytes(data);
   await makeExecutable(executableFile);
@@ -207,8 +207,7 @@ Future<void> _installLefthook(
   Logger logger,
 ) async {
   logger.stdout(
-    '[lefthook-dart] DEBUG Executing lefthook install in workingDirectory=' +
-        projectDir,
+    '[lefthook_dart] DEBUG Executing lefthook install in workingDirectory=$projectDir',
   );
   final result = await Process.run(
     executablePath,
@@ -219,12 +218,12 @@ Future<void> _installLefthook(
 
   if (result.exitCode != 0) {
     logger.stderr(result.stderr);
-    throw new Exception(result.stderr);
+    throw Exception(result.stderr);
   }
 
   logger.stdout(result.stdout);
 }
 
 Future<bool> _isExecutableExist(String executablePath) async {
-  return new File(executablePath).exists();
+  return File(executablePath).exists();
 }

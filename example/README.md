@@ -11,12 +11,17 @@ cd example
 flutter create .
 ```
 
-## 2. Install lefthook_dart (Inside `example/` because it will modify example/.git/hooks/... to use lefthook )
+## 2. Install lefthook_dart
 ```shell
 flutter pub global activate lefthook_dart
 ```
 
-## 3. Create `lefthook.yml` in the root of the project (`example/lefthook.yml`)
+## 3. Run lefthook inside `example/` because it will modify example/.git/hooks/... to use lefthook
+```shell
+lefthook
+```
+
+## 4. Create `lefthook.yml` in the root of the project (`example/lefthook.yml`)
 To enable Lefthook to run Dart formatting automatically before each commit, create `lefthook.yml` file in the root of your example project with the following content:
 ```shell
 pre-commit:
@@ -29,7 +34,7 @@ This configuration tells Lefthook to:
 - Look for all staged .dart files before each commit
 - Run dart format on them with a line length of 120
 - Automatically re-add the formatted files to the Git index
-### 3.1 Run pre-commit
+### 4.1 Run pre-commit
 ```shell
 lefthook run pre-commit
 ```
@@ -51,22 +56,22 @@ summary: (done in 0.88 seconds)
 ✔️ prettify (0.67 seconds)
 ```
 
-### 3.2 📝 Test Pre-commit Hook with Formatting
-#### 3.2.1 Modify a Dart file
+### 4.2 📝 Test Pre-commit Hook with Formatting
+#### 4.2.1 Modify a Dart file
 Open any .dart file inside the example/lib/ folder and add some badly formatted code, for example:
  ```dart
 void main(){print('hello world');}
  ```
-### 3.2.2 Stage the changes
+### 4.2.2 Stage the changes
 ```shell
 git add example/lib/main.dart
 ```
-### 3.2.3 Commit the changes
+### 4.2.3 Commit the changes
 ```shell
 git commit -m "Test pre-commit formatting hook"
 ```
 
-### 3.2.4 Observe the pre-commit hook
+### 4.2.4 Observe the pre-commit hook
 The pre-commit hook will automatically run:
 - dart format will reformat the staged Dart file with a line length of 120
 - The formatted file will be re-added to the commit automatically

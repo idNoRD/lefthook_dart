@@ -32,6 +32,8 @@ pre-commit:
       glob: "*.dart"
       run: dart format {all_files}
 ```
+Now, every time you run git commit, this hook will automatically format all your Dart files.  
+👉 For a working Flutter example, [see example/README.md](example/README.md)
 
 ### Step 4: Test hook manually (optional)
 ```sh

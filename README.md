@@ -5,7 +5,7 @@
 ![GitHub License](https://img.shields.io/github/license/idNoRD/lefthook_dart)
 [![Lefthook](https://img.shields.io/badge/Lefthook-1.12.2-blue)](https://github.com/evilmartians/lefthook/releases)
 
-A Dart wrapper for [Lefthook](https://github.com/evilmartians/lefthook) — the fast and powerful Git hooks manager.
+Add fast and reliable Git hooks to your Flutter and Dart projects with this Dart wrapper around [Lefthook](https://github.com/evilmartians/lefthook).
 
 ### About this project
 

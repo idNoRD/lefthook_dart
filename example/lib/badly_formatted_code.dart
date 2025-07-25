@@ -1,6 +1,10 @@
+import 'package:flutter/foundation.dart';
+
 /// Example of badly formatted code
 /// Uncomment:
 ///void main(){print('hello world');}
 void main() {
-  print('hello world2');
+  if (kDebugMode) {
+    print('hello world2');
+  }
 }

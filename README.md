@@ -23,6 +23,7 @@ This will ensure that the `lefthook` command uses `lefthook_dart`, a Dart-based 
 ```sh
 lefthook
 ```
+This will download the native Lefthook binary for your OS, install Git hooks using lefthook install, and prepare your repo for hook execution.
 
 ### Step 3: Change `lefthook.yml` in root of your project.
 ```yml
@@ -33,7 +34,7 @@ pre-commit:
       glob: "*.dart"
       run: dart format {all_files}
 ```
-Now, every time you run git commit, this hook will automatically format all your Dart files.  
+> Now, every time you run git commit, this hook will automatically format all your Dart files.  
 👉 For a working Flutter example, [see example/README.md](example/README.md)
 
 ### Step 4: Test hook manually (optional)
@@ -46,17 +47,18 @@ lefthook run pre-commit
 flutter pub global deactivate lefthook_dart
 ```
 
-### If you are using Melos
-```
-###############################################
-##          GIT HOOK COMMANDS                ##
-###############################################
-hooks:install:
-run: flutter pub global activate lefthook_dart && lefthook
-
-hooks:uninstall:
-run: flutter pub global deactivate lefthook_dart
-
-hooks:run:
-run: lefthook run pre-commit
+### If you are using [Melos](https://github.com/invertase/melos), you can automate Lefthook setup by adding these scripts to your `melos.yaml`.
+```yaml
+scripts:
+  ###############################################
+  ##          GIT HOOK COMMANDS                ##
+  ###############################################
+  hooks:install:
+    run: flutter pub global activate lefthook_dart && lefthook
+  
+  hooks:uninstall:
+    run: flutter pub global deactivate lefthook_dart
+  
+  hooks:run:
+    run: lefthook run pre-commit
 ```

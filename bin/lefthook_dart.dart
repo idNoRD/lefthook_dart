@@ -7,7 +7,7 @@ import 'package:cli_util/cli_logging.dart';
 import 'package:system_info2/system_info2.dart';
 
 const lefthookVersion = '1.12.2';
-const pubspecVersion = '1.0.4'; // @TODO generate using build runner
+const pubspecVersion = '1.0.5'; // @TODO generate using build runner
 
 void main(List<String> args) async {
   final logger = Logger.standard();
@@ -18,20 +18,36 @@ void main(List<String> args) async {
       ? '/usr/bin:${Platform.environment['PATH']}'
       : '${Platform.environment['PATH']}';
 
-  final whichGit = await Process.run('which', ['git'], environment: {'PATH': environmentThatIncludesGit});
+  final whichGit = await Process.run(
+    'which',
+    ['git'],
+    environment: {'PATH': environmentThatIncludesGit},
+  );
   logger.stdout('[lefthook_dart] is using git located at ${whichGit.stdout}');
 
-  final gitVersion = await Process.run('git', ['version'], environment: {'PATH': environmentThatIncludesGit});
+  final gitVersion = await Process.run(
+    'git',
+    ['version'],
+    environment: {'PATH': environmentThatIncludesGit},
+  );
 
   logger.stdout('[lefthook_dart] gitVersion=${gitVersion.stdout}');
 
   final projectDir = Directory.current.path;
   logger.stdout('[lefthook_dart] DEBUG projectDir=$projectDir');
 
-  final executablePath = Platform.script.resolve('../.exec/lefthook').toFilePath();
+  final executablePath = Platform.script
+      .resolve('../.exec/lefthook')
+      .toFilePath();
 
-  logger.stdout('lefthook_dart v$pubspecVersion is using lefthook v$lefthookVersion at: $executablePath');
-  await _ensureExecutable(executablePath, projectDir, environmentThatIncludesGit);
+  logger.stdout(
+    'lefthook_dart v$pubspecVersion is using lefthook v$lefthookVersion at: $executablePath',
+  );
+  await _ensureExecutable(
+    executablePath,
+    projectDir,
+    environmentThatIncludesGit,
+  );
 
   final validateResult = await Process.run(
     executablePath,
@@ -40,7 +56,9 @@ void main(List<String> args) async {
     environment: {'PATH': environmentThatIncludesGit},
   );
   if (validateResult.exitCode == 0) {
-    logger.stdout('🎉 lefthook_dart validation passed successfully! Output: ${validateResult.stdout}');
+    logger.stdout(
+      '🎉 lefthook_dart validation passed successfully! Output: ${validateResult.stdout}',
+    );
   } else {
     logger.stderr(
       '⚠️ lefthook_dart validation failed.\n'
@@ -101,7 +119,12 @@ Future<void> _ensureExecutable(
   logger.stdout('Saved to $targetPath');
   logger.stdout('');
 
-  await _installLefthook(targetPath, projectDir, environmentThatIncludesGit, logger);
+  await _installLefthook(
+    targetPath,
+    projectDir,
+    environmentThatIncludesGit,
+    logger,
+  );
 
   logger.stdout('All done!');
 }
@@ -183,7 +206,9 @@ Future<void> _installLefthook(
   String environmentThatIncludesGit,
   Logger logger,
 ) async {
-  logger.stdout('[lefthook_dart] DEBUG Executing lefthook install in workingDirectory=$projectDir');
+  logger.stdout(
+    '[lefthook_dart] DEBUG Executing lefthook install in workingDirectory=$projectDir',
+  );
   final result = await Process.run(
     executablePath,
     ["install" /*'-f'*/],

@@ -6,6 +6,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and uses [Semantic Versioning](https://semver.org/).
 
 ---
+## [1.0.5] - 2025-07-24
+
+### Fix
+pub.dev shows that /tmp/pana_DHGJDV/bin/lefthook_dart.dart doesn't match the Dart formatter.
+
 ## [1.0.4] - 2025-07-24
 
 ### Added

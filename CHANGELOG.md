@@ -6,6 +6,12 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and uses [Semantic Versioning](https://semver.org/).
 
 ---
+## [1.0.4] - 2025-07-24
+
+### Added
+Example into example/ folder (see example/README.md)
+analysis_options.yaml to follow recommended lint rules by pub.dev
+
 ## [1.0.3] - 2025-07-24
 
 ### Fixed

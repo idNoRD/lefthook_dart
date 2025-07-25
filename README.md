@@ -13,7 +13,8 @@ For detailed usage and configuration options, refer to the official [Lefthook do
 ## Installation
 
 ### Step 1: Enable the `lefthook` command to run from any place in your terminal
-If you already have the original Lefthook installed, you will need to uninstall it, as it may cause conflicts.
+If you already have the original Lefthook installed, you will need to uninstall it, as it may cause conflicts.  
+Run the command below inside the project directory where you want Git hooks to be managed.
 ```sh
 flutter pub global activate lefthook_dart
 ```

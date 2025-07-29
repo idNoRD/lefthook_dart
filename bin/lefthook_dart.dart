@@ -77,7 +77,7 @@ void main(List<String> args) async {
   if (result.exitCode != 0) {
     logger.stderr(
       '❌ lefthook_dart failed.\n'
-      'Details:\n${result.stderr}',
+      'Details:\n${result.stdout}\n${result.stderr}',
     );
     exit(result.exitCode);
   } else {

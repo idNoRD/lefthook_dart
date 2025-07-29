@@ -6,6 +6,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and uses [Semantic Versioning](https://semver.org/).
 
 ---
+## [1.0.6] - 2025-07-24
+
+### Fix
+additionally print stdout if lefthook_dart failed
+
 ## [1.0.5] - 2025-07-24
 
 ### Fix

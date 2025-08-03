@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 
@@ -73,6 +74,8 @@ void main(List<String> args) async {
     args,
     workingDirectory: projectDir,
     environment: {'PATH': environmentThatIncludesGit},
+    stdoutEncoding: utf8,
+    stderrEncoding: utf8,
   );
   if (result.exitCode != 0) {
     logger.stderr(

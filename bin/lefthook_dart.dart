@@ -160,6 +160,7 @@ String _resolveDownloadUrl(Logger logger) {
     // so also check if rawArch is amd64
     if ('x86_64' == arch.name.toLowerCase() ||
         'amd64' == rawArch.toLowerCase()) {
+      logger.stdout("Architecture: x86_64");
       return 'x86_64';
     }
 
@@ -193,9 +194,20 @@ List<int> _extractFile(List<int> downloadedData) {
 
 Future<void> _saveFile(String targetPath, List<int> data) async {
   Future<void> makeExecutable(File file) async {
+    final windowsUser = Platform.isWindows
+        ? await Process.run(
+            "whoami",
+            [],
+          ).then((value) => value.stdout.toString().trim())
+        : null;
+
     final result = !Platform.isWindows
         ? await Process.run("chmod", ["u+x", file.path])
-        : await Process.run("icacls", [file.path, "/grant:r", 'Users:(RX)']);
+        : await Process.run("icacls", [
+            file.path,
+            "/grant:r",
+            "${windowsUser!}:(RX)",
+          ]);
 
     if (result.exitCode != 0) {
       throw Exception(result.stderr);

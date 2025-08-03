@@ -8,7 +8,7 @@ executables:
   lefthook: lefthook_dart
 dependencies:
   archive: ^4.0.7
-  system_info2: ^4.0.0
   cli_util: ^0.4.2
+  system_info3: ^4.0.1
 dev_dependencies:
   lints: ^6.0.0

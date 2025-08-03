@@ -81,14 +81,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.3"
-  system_info2:
+  system_info3:
     dependency: "direct main"
     description:
-      name: system_info2
-      sha256: "65206bbef475217008b5827374767550a5420ce70a04d2d7e94d1d2253f3efc9"
+      name: system_info3
+      sha256: "86b296fe08ec5062f96379982ff2dfea94be349e63f970b534453997cee34738"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.0"
+    version: "4.0.1"
   typed_data:
     dependency: transitive
     description:

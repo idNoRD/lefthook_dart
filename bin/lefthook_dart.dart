@@ -1,10 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 
 import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
 import 'package:cli_util/cli_logging.dart';
-import 'package:system_info2/system_info2.dart';
+import 'package:system_info3/system_info3.dart';
 
 const lefthookVersion = '1.12.2';
 const pubspecVersion = '1.0.7'; // @TODO generate using build runner
@@ -19,7 +20,7 @@ void main(List<String> args) async {
       : '${Platform.environment['PATH']}';
 
   final whichGit = await Process.run(
-    'which',
+    !Platform.isWindows ? 'which' : 'where',
     ['git'],
     environment: {'PATH': environmentThatIncludesGit},
   );
@@ -73,6 +74,8 @@ void main(List<String> args) async {
     args,
     workingDirectory: projectDir,
     environment: {'PATH': environmentThatIncludesGit},
+    stdoutEncoding: utf8,
+    stderrEncoding: utf8,
   );
   if (result.exitCode != 0) {
     logger.stderr(
@@ -132,14 +135,17 @@ Future<void> _ensureExecutable(
 String _resolveDownloadUrl(Logger logger) {
   String getOS() {
     if (Platform.isLinux) {
+      logger.stdout("Platform: Linux");
       return 'Linux';
     }
 
     if (Platform.isMacOS) {
+      logger.stdout("Platform: MacOS");
       return 'MacOS';
     }
 
     if (Platform.isWindows) {
+      logger.stdout("Platform: Windows");
       return 'Windows';
     }
 
@@ -148,8 +154,14 @@ String _resolveDownloadUrl(Logger logger) {
 
   String getArchitecture(Logger logger) {
     final ProcessorArchitecture arch = SysInfo.kernelArchitecture;
-    if ('x86_64' == arch.name.toLowerCase()) {
-      return arch.name;
+    final rawArch = SysInfo.rawKernelArchitecture;
+
+    // Windows does not return x86_64 for some reason,
+    // so also check if rawArch is amd64
+    if ('x86_64' == arch.name.toLowerCase() ||
+        'amd64' == rawArch.toLowerCase()) {
+      logger.stdout("Architecture: x86_64");
+      return 'x86_64';
     }
 
     // TODO: check for i386
@@ -182,12 +194,20 @@ List<int> _extractFile(List<int> downloadedData) {
 
 Future<void> _saveFile(String targetPath, List<int> data) async {
   Future<void> makeExecutable(File file) async {
-    if (Platform.isWindows) {
-      // TODO: write code for Windows case
-      throw Exception("Can't set executable permissions on Windows");
-    }
+    final windowsUser = Platform.isWindows
+        ? await Process.run(
+            "whoami",
+            [],
+          ).then((value) => value.stdout.toString().trim())
+        : null;
 
-    final result = await Process.run("chmod", ["u+x", file.path]);
+    final result = !Platform.isWindows
+        ? await Process.run("chmod", ["u+x", file.path])
+        : await Process.run("icacls", [
+            file.path,
+            "/grant:r",
+            "${windowsUser!}:(RX)",
+          ]);
 
     if (result.exitCode != 0) {
       throw Exception(result.stderr);

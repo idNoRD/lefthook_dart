@@ -7,7 +7,7 @@ import 'package:cli_util/cli_logging.dart';
 import 'package:system_info2/system_info2.dart';
 
 const lefthookVersion = '1.12.2';
-const pubspecVersion = '1.0.5'; // @TODO generate using build runner
+const pubspecVersion = '1.0.7'; // @TODO generate using build runner
 
 void main(List<String> args) async {
   final logger = Logger.standard();

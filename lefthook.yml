@@ -2,4 +2,5 @@ pre-commit:
   commands:
     prettify:
       glob: "*.dart"
-      run: dart format {staged_files} && git add {staged_files}
+      run: dart format --line-length 120 {staged_files}
+      stage_fixed: true

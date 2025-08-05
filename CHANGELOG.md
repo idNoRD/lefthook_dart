@@ -6,6 +6,11 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and uses [Semantic Versioning](https://semver.org/).
 
 ---
+## [1.0.8] - 2025-08-04
+
+### Added
+Initial Windows support thanks to @NewblyAaron
+
 ## [1.0.7] - 2025-08-04
 
 ### Added

@@ -10,6 +10,7 @@ and uses [Semantic Versioning](https://semver.org/).
 
 ### Added
 Initial Windows support thanks to @NewblyAaron
+How to prepare and publish a new version of the package
 
 ## [1.0.7] - 2025-08-04
 

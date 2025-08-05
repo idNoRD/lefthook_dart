@@ -104,3 +104,14 @@ pre-commit:
       run: dart format --line-length 120 {staged_files}
       stage_fixed: true
 ```
+
+## How to prepare and publish a new version of the package
+```yaml
+edit CHANGELOG.md
+edit lefthook_dart.dart to have the new version (const pubspecVersion = '1.0.2';)
+edit pubspec.yaml to have the new version (version -> 1.0.2)
+dart pub publish --dry-run                                                                                                                                                                                    
+git tag 1.0.2                                                                                                                                                                                                 
+git push origin 1.0.2
+dart pub publish
+```

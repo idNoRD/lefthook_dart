@@ -8,7 +8,7 @@ import 'package:cli_util/cli_logging.dart';
 import 'package:system_info3/system_info3.dart';
 
 const lefthookVersion = '1.12.2';
-const pubspecVersion = '1.0.7'; // @TODO generate using build runner
+const pubspecVersion = '1.0.8'; // @TODO generate using build runner
 
 void main(List<String> args) async {
   final logger = Logger.standard();
@@ -26,29 +26,17 @@ void main(List<String> args) async {
   );
   logger.stdout('[lefthook_dart] is using git located at ${whichGit.stdout}');
 
-  final gitVersion = await Process.run(
-    'git',
-    ['version'],
-    environment: {'PATH': environmentThatIncludesGit},
-  );
+  final gitVersion = await Process.run('git', ['version'], environment: {'PATH': environmentThatIncludesGit});
 
   logger.stdout('[lefthook_dart] gitVersion=${gitVersion.stdout}');
 
   final projectDir = Directory.current.path;
   logger.stdout('[lefthook_dart] DEBUG projectDir=$projectDir');
 
-  final executablePath = Platform.script
-      .resolve('../.exec/lefthook')
-      .toFilePath();
+  final executablePath = Platform.script.resolve('../.exec/lefthook').toFilePath();
 
-  logger.stdout(
-    'lefthook_dart v$pubspecVersion is using lefthook v$lefthookVersion at: $executablePath',
-  );
-  await _ensureExecutable(
-    executablePath,
-    projectDir,
-    environmentThatIncludesGit,
-  );
+  logger.stdout('lefthook_dart v$pubspecVersion is using lefthook v$lefthookVersion at: $executablePath');
+  await _ensureExecutable(executablePath, projectDir, environmentThatIncludesGit);
 
   final validateResult = await Process.run(
     executablePath,
@@ -57,9 +45,7 @@ void main(List<String> args) async {
     environment: {'PATH': environmentThatIncludesGit},
   );
   if (validateResult.exitCode == 0) {
-    logger.stdout(
-      '🎉 lefthook_dart validation passed successfully! Output: ${validateResult.stdout}',
-    );
+    logger.stdout('🎉 lefthook_dart validation passed successfully! Output: ${validateResult.stdout}');
   } else {
     logger.stderr(
       '⚠️ lefthook_dart validation failed.\n'
@@ -122,12 +108,7 @@ Future<void> _ensureExecutable(
   logger.stdout('Saved to $targetPath');
   logger.stdout('');
 
-  await _installLefthook(
-    targetPath,
-    projectDir,
-    environmentThatIncludesGit,
-    logger,
-  );
+  await _installLefthook(targetPath, projectDir, environmentThatIncludesGit, logger);
 
   logger.stdout('All done!');
 }
@@ -154,17 +135,26 @@ String _resolveDownloadUrl(Logger logger) {
 
   String getArchitecture(Logger logger) {
     final ProcessorArchitecture arch = SysInfo.kernelArchitecture;
-    final rawArch = SysInfo.rawKernelArchitecture;
 
-    // Windows does not return x86_64 for some reason,
-    // so also check if rawArch is amd64
-    if ('x86_64' == arch.name.toLowerCase() ||
-        'amd64' == rawArch.toLowerCase()) {
+    String architectureName = arch.name;
+
+    // temporary workaround for system_info3 bug where it does not return x86_64 for amd64 (Windows)
+    if (ProcessorArchitecture.unknown.name.toLowerCase() == architectureName.toLowerCase()) {
+      final rawArch = SysInfo.rawKernelArchitecture;
+      if ('amd64' == rawArch.toLowerCase()) {
+        architectureName = ProcessorArchitecture.x86_64.name;
+      }
+    }
+
+    if (ProcessorArchitecture.x86_64.name.toLowerCase() == architectureName.toLowerCase()) {
       logger.stdout("Architecture: x86_64");
       return 'x86_64';
     }
 
-    // TODO: check for i386
+    if (ProcessorArchitecture.x86.name.toLowerCase() == architectureName.toLowerCase()) {
+      logger.stdout("Architecture: x86_64");
+      return 'i386';
+    }
 
     throw Error();
   }
@@ -192,28 +182,22 @@ List<int> _extractFile(List<int> downloadedData) {
   return GZipDecoder().decodeBytes(downloadedData);
 }
 
-Future<void> _saveFile(String targetPath, List<int> data) async {
-  Future<void> makeExecutable(File file) async {
-    final windowsUser = Platform.isWindows
-        ? await Process.run(
-            "whoami",
-            [],
-          ).then((value) => value.stdout.toString().trim())
-        : null;
+Future<void> makeExecutable(File file) async {
+  final ProcessResult result;
 
-    final result = !Platform.isWindows
-        ? await Process.run("chmod", ["u+x", file.path])
-        : await Process.run("icacls", [
-            file.path,
-            "/grant:r",
-            "${windowsUser!}:(RX)",
-          ]);
-
-    if (result.exitCode != 0) {
-      throw Exception(result.stderr);
-    }
+  if (Platform.isWindows) {
+    final windowsUser = await Process.run("whoami", []).then((value) => value.stdout.toString().trim());
+    result = await Process.run("icacls", [file.path, "/grant:r", "$windowsUser:(RX)"]);
+  } else {
+    result = await Process.run("chmod", ["u+x", file.path]);
   }
 
+  if (result.exitCode != 0) {
+    throw Exception(result.stderr);
+  }
+}
+
+Future<void> _saveFile(String targetPath, List<int> data) async {
   final executableFile = File(targetPath);
   await executableFile.create(recursive: true);
   await executableFile.writeAsBytes(data);
@@ -226,9 +210,7 @@ Future<void> _installLefthook(
   String environmentThatIncludesGit,
   Logger logger,
 ) async {
-  logger.stdout(
-    '[lefthook_dart] DEBUG Executing lefthook install in workingDirectory=$projectDir',
-  );
+  logger.stdout('[lefthook_dart] DEBUG Executing lefthook install in workingDirectory=$projectDir');
   final result = await Process.run(
     executablePath,
     ["install" /*'-f'*/],

@@ -1,6 +1,6 @@
 ## lefthook_dart
 [![pub.dev badge](https://img.shields.io/pub/v/lefthook_dart?logo=dart&logoColor=white)](https://pub.dev/packages/lefthook_dart)
-![GitHub Maintained](https://img.shields.io/maintenance/yes/2025)
+![GitHub Maintained](https://img.shields.io/maintenance/yes/2026)
 [![Pub points](https://badgen.net/pub/points/lefthook_dart)](https://pub.dev/packages/lefthook_dart/score)
 ![GitHub License](https://img.shields.io/github/license/idNoRD/lefthook_dart)
 [![Lefthook](https://img.shields.io/badge/Lefthook-1.12.2-blue)](https://github.com/evilmartians/lefthook/releases)
